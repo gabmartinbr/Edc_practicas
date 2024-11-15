@@ -7,36 +7,37 @@ module microc(
 //Microcontrolador sin memoria de datos de un solo ciclo
 
 // declaración señales internas
-reg [9:0] PC;             // registro de program counter 10b
+wire [9:0] PC;             // registro de program counter 10b
 wire [15:0] instruc;      // instruccion a usar 16b
 wire [7:0] reg_1, reg_2;  // registros de los operandos 8b
 wire [7:0] alu_output;    // registro resultado alu 8b
 wire [7:0] dato_a_reg;    // wd3, dato a escribir en los registros
 wire [9:0] sig_pc;        // dirección del siguiente program counter 10b
 wire z_flag;              // salida, flag de zero de el flipflop
+wire [9:0] pc_siguiente;  // 10 bits, dirección siguiente del PC
 
 // instanciar los módulos
 // instancia del sumador para siguiente dir del pc
 sum sumador_pc (
-  pc_siguiente,   // salida del sumador pc incrementado sig dir del pc
-  10'b1           // entrada 0(a), constante 1 para la suma
-  PC,             // entrada 1(b), valor actual del pc
+  .Y(sig_pc),    // Salida del sumador: dirección siguiente del PC
+  .A(PC),        // Entrada A: PC actual
+  .B(10'b1)      // Entrada B: constante 1
 );
 
 // instancia de multiplexor output -> program counter
 mux2 #(10) mux_a_pc (
-  sig_pc,       // salida mux que va al pc
-  instruc[9:0], // entrada 0, dir salto
-  pc_siguiente, // entrada 1, salida del sumador_pc, siguiente dir pc
-  s_inc         // 0 = saltar  1 = incrementar
+  pc_siguiente,       // salida mux que va al pc
+  instruc[9:0],       // entrada 0, dir salto
+  sig_pc,             // entrada 1, salida del sumador_pc, siguiente dir pc
+  s_inc               // 0 = saltar  1 = incrementar
 );
 
 // instancia del registro del PC
 registro #(10) registro_PC (
-  PC,           // valor actual del pc, salida pc
-  clk,          // señal reloj
-  reset,        // señar reseteo
-  sig_pc        // salida del mux, entrada del registro pc
+  .Q(PC),           // Salida del registro, valor de PC
+  .clk(clk),        // Señal de reloj
+  .reset(reset),    // Señal de reseteo
+  .D(pc_siguiente)  // Entrada de datos: pc_siguiente
 );
 
 // instancia de memoria de programa
@@ -68,19 +69,19 @@ regfile banco_registros (
 
 // instancia alu
 alu alu_module (
-  alu_output,       // salida alu, entrada 0 mux
-  z,                // salida, flag cero
-  reg_1,            // entrada 0, operando 1 rd1
-  reg_2,            // entrada 1, operando 2 rd2
-  Op,               // selector de operación a realizar
+  .S(alu_output),    // Salida de la ALU
+  .zero(z),           // Flag de cero
+  .A(reg_1),          // Operando 1 (reg_1)
+  .B(reg_2),          // Operando 2 (reg_2)
+  .Op(Op)             // Selector de operación
 );
 
 // instancia flipflop
 ffd flipflop_zero (
-  clk,            // entrada, señal de reloj
-  reset,          // entrada, señal de reseteo
-  z,
-  wez,
-  z_flag
+  .clk(clk),      // Entrada de reloj
+  .reset(reset),  // Entrada de reseteo
+  .d(z),          // Entrada de datos (flag de zero)
+  .carga(wez),    // Entrada de control para cargar (habilitador)
+  .q(z_flag)      // Salida del flip-flop (z_flag)
 );
 endmodule
