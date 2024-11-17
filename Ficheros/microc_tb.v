@@ -43,7 +43,7 @@ initial begin
     s_inm = 0;  // No usar valor inmediato
     we3 = 0;    // No habilitar escritura en registros
     wez = 0;    // No habilitar el flag de cero
-    Op = 3'b000; // Operación de la ALU inicial (puedes ajustarlo según las pruebas)
+    Op = 3'b000; // Operación de la ALU inicial
 
     // Desactivamos el reset después de 5 ns
     #5 reset = 0;
