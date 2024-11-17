@@ -27,8 +27,8 @@ microc micro_procesador (
 
 // generación de reloj clk
 always begin
-  clk = 0; #5;
-  clk = 1; #5;
+  clk = 1; #10;
+  clk = 0; #10;
 end
 
 // Reseteo y configuración de salidas del testbench
@@ -37,7 +37,7 @@ initial begin
     $dumpvars(0, microc_tb);  // Volcado de señales para ver en GTKWave
 
     // Inicializamos las señales
-    clk = 0;
+    clk = 1;
     reset = 1;  // Activar el reset al principio
     s_inc = 0;  // No incrementar el PC inicialmente
     s_inm = 0;  // No usar valor inmediato
@@ -45,32 +45,60 @@ initial begin
     wez = 0;    // No habilitar el flag de cero
     Op = 3'b000; // Operación de la ALU inicial (puedes ajustarlo según las pruebas)
 
-    // Desactivamos el reset después de 10 ns
-    #10 reset = 0;
-end
+    // Desactivamos el reset después de 5 ns
+    #5 reset = 0;
 
-// Bloque de simulación: señales control por ciclo
-initial begin
-    // Primer ciclo: ejecutar una instrucción (por ejemplo, cargar un valor)
-    #20 s_inc = 1;    // Incrementar el PC (ciclo 1)
-    Op = 3'b010;      // Operación de la ALU, por ejemplo, ADD
-    we3 = 1;          // Habilitar escritura en el banco de registros
-    s_inm = 1;        // Usar valor inmediato
-    wez = 1;          // Actualizar bandera de cero
-    #20;              // Esperar un ciclo de reloj
-    // Aquí puedes observar cómo se comportan las señales y el PC
+    // ciclo 0: jump Start
+    #5 
+    s_inc = 0;    // No incrementar PC
+    s_inm = 0;    // No usar valor inmediato
+    we3 = 0;      // No escribir en registro
+    wez = 0;      // No actualizar flag zero
 
-    // Segundo ciclo: ejecutar otra instrucción (por ejemplo, una suma)
-    #20 s_inc = 1;    // Incrementar el PC
-    Op = 3'b010;      // ALU realiza una suma
-    we3 = 1;          // Habilitar escritura en el banco de registros
-    s_inm = 0;        // Usar registros en lugar de inmediato
-    wez = 1;          // Actualizar bandera de cero
-    #20;              // Esperar un ciclo de reloj
+    // ciclo 5: li 0, R2
+    #20 
+    s_inc = 1;    // Incrementar PC
+    s_inm = 1;    // Usar valor inmediato
+    we3 = 1;      // Habilitar escritura en registro
+    wez = 0;      // habilitar flag zero
+    Op = 3'b000;  // Operación ALU default
+    
+    // ciclo 6: li 2, R1
+    #20
+    s_inc = 1;    // Incrementar PC
+    s_inm = 1;    // Usar valor inmediato
+    we3 = 1;      // Habilitar escritura en registro
+    Op = 3'b000;  // Operación ALU default
 
-    // Más ciclos de prueba, puedes agregar más instrucciones aquí.
+    // ciclo 7: li 4, R3
+    #20
+    s_inc = 1;    // Incrementar PC
+    s_inm = 1;    // Usar valor inmediato
+    we3 = 1;      // Habilitar escritura en registro
+    Op = 3'b000;  // Operación ALU default
 
-    $finish;          // Termina la simulación
-end
+    // ciclo 8: li 1, R4
+    #20
+    s_inc = 1;    // Incrementar PC
+    s_inm = 1;    // Usar valor inmediato
+    we3 = 1;      // Habilitar escritura en registro
+    Op = 3'b000;  // Operación ALU default
+    wez = 0;
 
+    // Ciclo 9-11: Primera Iteración del bucle
+    #20 s_inc = 1; s_inm = 0; we3 = 1; Op = 3'b010; wez = 1;       // add R2, R3, R2
+    #20 s_inc = 1; s_inm = 0; we3 = 1; Op = 3'b011; wez = 1;       // sub R1, R4, R1
+    #20 s_inc = 0; s_inm = 0; we3 = 0; Op = 3'b000; wez = 0;       // jnz Iter
+
+    // Ciclo 9-11: Segunda Iteración del bucle
+    #20 s_inc = 1; s_inm = 0; we3 = 1; Op = 3'b010; wez = 1;        // add R2, R3, R2
+    #20 s_inc = 1; s_inm = 0; we3 = 1; Op = 3'b011; wez = 1;        // sub R1, R4, R1
+    #20 s_inc = 1; s_inm = 0; we3 = 0; Op = 3'b000; wez = 0;        // jnz Iter
+
+    // Ciclo 12: Salida del bucle, jmp Fin
+    #20 s_inc = 0; s_inm = 0; we3 = 0; wez = 1;
+
+    // Finalizar la simulación
+    #35 $finish;
+  end
 endmodule

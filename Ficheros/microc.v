@@ -16,6 +16,9 @@ wire [9:0] sig_pc;        // dirección del siguiente program counter 10b
 wire z_flag;              // salida, flag de zero de el flipflop
 wire [9:0] pc_siguiente;  // 10 bits, dirección siguiente del PC
 
+// asignación del opcode de salida
+assign Opcode = instruc [15:10];
+
 // instanciar los módulos
 // instancia del sumador para siguiente dir del pc
 sum sumador_pc (
