@@ -24,7 +24,7 @@ assign Opcode = instruc [15:10];
 sum sumador_pc (
   .Y(sig_pc),    // Salida del sumador: dirección siguiente del PC
   .A(PC),        // Entrada A: PC actual
-  .B(10'b1)      // Entrada B: constante 1
+  .B(10'b0000000001)      // Entrada B: constante 1
 );
 
 // instancia de multiplexor output -> program counter
@@ -73,7 +73,7 @@ regfile banco_registros (
 // instancia alu
 alu alu_module (
   .S(alu_output),    // Salida de la ALU
-  .zero(z),           // Flag de cero
+  .zero(z_flag),           // Flag de cero
   .A(reg_1),          // Operando 1 (reg_1)
   .B(reg_2),          // Operando 2 (reg_2)
   .Op(Op)             // Selector de operación
@@ -83,8 +83,8 @@ alu alu_module (
 ffd flipflop_zero (
   .clk(clk),      // Entrada de reloj
   .reset(reset),  // Entrada de reseteo
-  .d(z),          // Entrada de datos (flag de zero)
+  .d(z_flag),          // Entrada de datos (flag de zero)
   .carga(wez),    // Entrada de control para cargar (habilitador)
-  .q(z_flag)      // Salida del flip-flop (z_flag)
+  .q(z)      // Salida del flip-flop (z_flag)
 );
 endmodule

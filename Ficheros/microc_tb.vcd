@@ -1,5 +1,5 @@
 $date
-	Sun Nov 17 13:28:48 2024
+	Tue Nov 19 12:22:59 2024
 $end
 $version
 	Icarus Verilog
@@ -41,7 +41,7 @@ $var wire 3 5 Op [2:0] $end
 $var wire 8 6 B [7:0] $end
 $var wire 8 7 A [7:0] $end
 $var reg 8 8 S [7:0] $end
-$var reg 1 ! zero $end
+$var reg 1 + zero $end
 $upscope $end
 $scope module banco_registros $end
 $var wire 4 9 RA1 [3:0] $end
@@ -56,9 +56,9 @@ $upscope $end
 $scope module flipflop_zero $end
 $var wire 1 ) carga $end
 $var wire 1 $ clk $end
-$var wire 1 ! d $end
+$var wire 1 + d $end
 $var wire 1 % reset $end
-$var reg 1 + q $end
+$var reg 1 ! q $end
 $upscope $end
 $scope module memoria_prog $end
 $var wire 16 ? Data [15:0] $end
@@ -134,7 +134,7 @@ b101 /
 b0 .
 b0 -
 b1 ,
-0+
+1+
 b0 *
 0)
 0(
@@ -144,7 +144,7 @@ b0 *
 1$
 b0 #
 b10000 "
-1!
+0!
 $end
 #500
 0%
@@ -276,7 +276,7 @@ b1001 K
 b1001 L
 1$
 #11000
-0!
+0+
 b100 2
 b100 8
 b100 A
@@ -328,7 +328,7 @@ b11 #
 b11 *
 b11 5
 #14000
-1!
+1+
 b0 2
 b0 8
 b0 A
@@ -379,7 +379,7 @@ b0 5
 b100011 1
 b100011 <
 b100011 C
-0!
+0+
 b100011 2
 b100011 8
 b100011 A
@@ -465,7 +465,7 @@ b11 #
 b11 *
 b11 5
 #20000
-1!
+1+
 b0 2
 b0 8
 b0 A
@@ -536,7 +536,7 @@ b1100 I
 1)
 0&
 #24000
-1+
+1!
 1$
 #25000
 0$
