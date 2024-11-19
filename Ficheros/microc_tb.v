@@ -54,6 +54,7 @@ initial begin
     s_inm = 0;    // No usar valor inmediato
     we3 = 0;      // No escribir en registro
     wez = 0;      // No actualizar flag zero
+    Op = 3'b000;
 
     // ciclo 5: li 0, R2
     #20 
